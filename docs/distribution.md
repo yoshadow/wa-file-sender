@@ -2,7 +2,9 @@
 
 Autor: **Isaac Avalos**. Versión candidata: **0.1.0-beta.1**. Plataformas objetivo: Windows 10/11 x64 y Ubuntu 24.04 x64.
 
-No se han generado instaladores ni AppImage en esta etapa. El código original usa **GNU GPL versión 3 únicamente** (`GPL-3.0-only`), elegida por el autor. El texto íntegro está en `LICENSE` y los datos de autor en `NOTICE`; ambos se incluirán en los futuros paquetes. Las dependencias conservan sus licencias.
+El instalador Windows y el AppImage Linux se generaron y verificaron correctamente en la [ejecución 40624285147](https://github.com/yoshadow/wa-file-sender/actions/runs/40624285147), desde el commit `f3657589d9d0cf5067d3cfc16665f8efa768ac79`. Se reutilizarán esos mismos binarios para el borrador beta, sin volver a empaquetarlos. La publicación sigue pendiente de autorización.
+
+El código original usa **GNU GPL versión 3 únicamente** (`GPL-3.0-only`), elegida por el autor. El texto íntegro está en `LICENSE` y los datos de autor en `NOTICE`; ambos se incluyen en los paquetes. Las dependencias conservan sus licencias.
 
 ## Archivos preparados
 
@@ -35,12 +37,15 @@ Los jobs de compilación tienen permisos de lectura; solo el job opcional del bo
 
 Descargar los paquetes y comprobarlos en máquinas limpias, sin Node.js ni Chrome instalados. La verificación del runtime en Actions no sustituye la instalación real.
 
-| Sistema                              | Estado actual                                               |
-| ------------------------------------ | ----------------------------------------------------------- |
-| Windows 11 x64                       | Pendiente de probar el instalador                           |
-| Windows 10 22H2 x64                  | Pendiente de probar el instalador                           |
-| Ubuntu 24.04 x64                     | Flujo desde código aprobado manualmente; AppImage pendiente |
-| Otras distribuciones o arquitecturas | Sin compatibilidad declarada                                |
+| Sistema                              | Estado actual                                                      |
+| ------------------------------------ | ------------------------------------------------------------------ |
+| Windows 11 x64                       | Prueba manual satisfactoria; compilación del sistema no registrada |
+| Linux Mint 22.3 Cinnamon x64         | Prueba manual satisfactoria                                        |
+| Windows 10 22H2 x64                  | Pendiente de probar el instalador                                  |
+| Ubuntu 24.04 x64                     | Flujo desde código aprobado manualmente; AppImage pendiente        |
+| Otras distribuciones o arquitecturas | Sin compatibilidad declarada                                       |
+
+El 28 de octubre de 2026, Isaac Avalos confirmó el funcionamiento, el envío, la apertura del ZIP recibido y la recuperación de sesión en Windows 11 x64 y Linux Mint 22.3 Cinnamon de 64 bits. Este registro no da por comprobados los demás escenarios de la lista siguiente. Las notas bilingües de la beta están en `docs/release-notes.md`.
 
 Comprobar instalación/apertura, icono, español e inglés, persistencia del idioma, QR y recuperación de sesión, CSV, archivos con acentos, mensaje, envío autorizado, pausas, detención, resultados inciertos, limpieza de temporales y un log por lote en la carpeta seleccionada. Revisar que el paquete no contiene sesiones ni documentos.
 
