@@ -23,7 +23,7 @@ win:
       arch: [x64]
 linux:
   icon: assets/icon.png
-  artifactName: WA-File-Sender-${version}-linux-${arch}.${ext}
+  artifactName: WA-File-Sender-${version}-linux-x64.${ext}
   target:
     - target: AppImage
       arch: [x64]
