@@ -1,0 +1,55 @@
+{
+  "name": "wa-file-sender",
+  "version": "0.1.0-beta.1",
+  "private": true,
+  "description": "Aplicación de escritorio para preparar y enviar un ZIP por contacto de WhatsApp.",
+  "main": "src/main/index.cjs",
+  "engines": {
+    "node": ">=24 <25",
+    "npm": ">=11"
+  },
+  "scripts": {
+    "postinstall": "node scripts/patch-whatsapp.cjs && install-electron && node node_modules/puppeteer/install.mjs && node scripts/prepare-browser.cjs",
+    "prestart": "node scripts/patch-whatsapp.cjs",
+    "start": "electron .",
+    "pretest": "node scripts/patch-whatsapp.cjs",
+    "test": "node --test --test-isolation=none tests/unit/*.test.cjs",
+    "test:desktop": "node tests/integration/run-desktop.cjs",
+    "test:package": "node scripts/verify-package.cjs",
+    "lint": "eslint .",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "check": "npm run lint && npm run format:check && npm test",
+    "prepare:browser": "node scripts/prepare-browser.cjs",
+    "build:dir": "node scripts/patch-whatsapp.cjs && npm run prepare:browser && electron-builder --dir --publish never",
+    "check:distribution": "node scripts/check-distribution.cjs",
+    "build:windows": "node scripts/check-distribution.cjs && node scripts/patch-whatsapp.cjs && npm run prepare:browser && electron-builder --win nsis --x64 --publish never",
+    "build:linux": "node scripts/check-distribution.cjs && node scripts/patch-whatsapp.cjs && npm run prepare:browser && electron-builder --linux AppImage --x64 --publish never"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "electron": "44.7.0",
+    "electron-builder": "26.15.3",
+    "eslint": "10.12.0",
+    "globals": "17.13.0",
+    "prettier": "3.9.9"
+  },
+  "dependencies": {
+    "archiver": "8.0.0",
+    "better-sqlite3": "13.0.3",
+    "csv-parse": "7.0.3",
+    "libphonenumber-js": "1.13.15",
+    "puppeteer": "25.15.0",
+    "qrcode": "1.5.4",
+    "whatsapp-web.js": "1.34.7"
+  },
+  "overrides": {
+    "whatsapp-web.js": {
+      "puppeteer": "$puppeteer"
+    }
+  },
+  "author": {
+    "name": "Isaac Avalos"
+  },
+  "license": "GPL-3.0-only"
+}

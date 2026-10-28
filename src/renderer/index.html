@@ -1,0 +1,525 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>WA File Sender</title>
+    <link rel="stylesheet" href="styles.css" />
+    <script src="translations.js" defer></script>
+    <script src="i18n.js" defer></script>
+    <script src="app.js" defer></script>
+    <script src="preview.js" defer></script>
+    <script src="queue.js" defer></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside
+        class="sidebar"
+        aria-label="Estado de la aplicación"
+        data-i18n-aria-label="Estado de la aplicación"
+      >
+        <img
+          class="brand-mark"
+          src="icon.png"
+          width="48"
+          height="48"
+          alt=""
+          aria-hidden="true"
+        />
+        <p class="brand-name">File Sender</p>
+        <p class="sidebar-description">
+          <span data-i18n="Tus documentos, organizados por destinatario.">
+            Tus documentos, organizados por destinatario.
+          </span>
+        </p>
+        <section
+          id="whatsapp-link"
+          class="sidebar-link"
+          aria-labelledby="link-title"
+          tabindex="-1"
+        >
+          <h2 id="link-title">
+            <span data-i18n="Vincular WhatsApp">Vincular WhatsApp</span>
+          </h2>
+          <div class="session-state" role="status" aria-live="polite">
+            <span
+              id="session-indicator"
+              class="status-dot"
+              data-state="disconnected"
+              aria-hidden="true"
+            ></span>
+            <span id="session-label"
+              ><span data-i18n="WhatsApp sin vincular"
+                >WhatsApp sin vincular</span
+              ></span
+            >
+          </div>
+          <p id="account-label" class="sidebar-note"></p>
+          <p class="sidebar-note">
+            <span
+              data-i18n="En tu teléfono abre WhatsApp → Dispositivos vinculados → Vincular un dispositivo."
+            >
+              En tu teléfono abre WhatsApp → Dispositivos vinculados → Vincular
+              un dispositivo.
+            </span>
+          </p>
+          <div class="actions">
+            <button id="connect-button" class="primary" type="button" disabled>
+              <span data-i18n="Vincular con QR"> Vincular con QR </span>
+            </button>
+            <button id="unlink-button" type="button" disabled>
+              <span data-i18n="Desvincular"> Desvincular </span>
+            </button>
+          </div>
+          <div id="qr-area" hidden>
+            <img
+              id="qr-image"
+              width="280"
+              height="280"
+              alt="Código QR para vincular WhatsApp"
+              data-i18n-alt="Código QR para vincular WhatsApp"
+            />
+            <p class="sidebar-note">
+              <span
+                data-i18n="Escanea este QR desde WhatsApp. Se actualizará cuando sea necesario. No lo compartas."
+              >
+                Escanea este QR desde WhatsApp. Se actualizará cuando sea
+                necesario. No lo compartas.
+              </span>
+            </p>
+          </div>
+          <p
+            id="session-detail"
+            class="sidebar-note"
+            role="status"
+            aria-live="polite"
+          >
+            <span data-i18n="Preparando la sesión…">
+              Preparando la sesión…
+            </span>
+          </p>
+          <p id="operation-result" role="status" aria-live="polite"></p>
+          <p class="sidebar-note">
+            <span
+              data-i18n="La sesión permanece en este equipo. Puedes eliminarla con Desvincular."
+            >
+              La sesión permanece en este equipo. Puedes eliminarla con
+              Desvincular.
+            </span>
+          </p>
+        </section>
+        <div class="language-picker">
+          <label for="language-select"
+            ><span data-i18n="Idioma">Idioma</span></label
+          >
+          <select id="language-select" disabled>
+            <option value="es">Español</option>
+            <option value="en">English</option>
+          </select>
+          <p
+            id="language-status"
+            class="sidebar-note"
+            role="status"
+            aria-live="polite"
+          ></p>
+        </div>
+        <button id="close-button" class="sidebar-close" type="button">
+          <span data-i18n="Cerrar aplicación"> Cerrar aplicación </span>
+        </button>
+        <p id="app-version" class="app-version">
+          <span data-i18n="Cargando información…">Cargando información…</span>
+        </p>
+      </aside>
+      <main>
+        <header class="workspace-heading">
+          <div>
+            <h1><span data-i18n="Enviar archivos">Enviar archivos</span></h1>
+            <p class="intro">
+              <span
+                data-i18n="Selecciona tus contactos y documentos. Enviaremos un ZIP por destinatario."
+              >
+                Selecciona tus contactos y documentos. Enviaremos un ZIP por
+                destinatario.
+              </span>
+            </p>
+          </div>
+          <details class="help">
+            <summary>
+              <span data-i18n="Cómo funciona">Cómo funciona</span>
+            </summary>
+            <p>
+              <span data-i18n="Importa un CSV UTF-8 con las columnas">
+                Importa un CSV UTF-8 con las columnas </span
+              ><code>nombre,telefono</code
+              ><span
+                data-i18n=". Incluye la lada internacional en los teléfonos; el + se añade automáticamente si falta. Cada subcarpeta debe coincidir con el nombre de un contacto. Se incluyen solo archivos directos; los originales permanecen intactos."
+                >. Incluye la lada internacional en los teléfonos; el + se añade
+                automáticamente si falta. Cada subcarpeta debe coincidir con el
+                nombre de un contacto. Se incluyen solo archivos directos; los
+                originales permanecen intactos.
+              </span>
+            </p>
+            <p>
+              <span
+                data-i18n="El ZIP se crea automáticamente, sin contraseña, con un límite de 20 MiB. Revisa cada número y confirma antes de enviar. Utiliza destinatarios que hayan autorizado recibir los documentos. La integración es no oficial y las pausas no garantizan evitar bloqueos."
+              >
+                El ZIP se crea automáticamente, sin contraseña, con un límite de
+                20 MiB. Revisa cada número y confirma antes de enviar. Utiliza
+                destinatarios que hayan autorizado recibir los documentos. La
+                integración es no oficial y las pausas no garantizan evitar
+                bloqueos.
+              </span>
+            </p>
+          </details>
+        </header>
+        <section
+          class="toolbar"
+          aria-label="Preparación del envío"
+          data-i18n-aria-label="Preparación del envío"
+        >
+          <div class="toolbar-field">
+            <h2 id="contacts-title">
+              <span data-i18n="1. Contactos">1. Contactos</span>
+            </h2>
+            <div class="actions">
+              <button id="import-csv-button" type="button" disabled>
+                <span data-i18n="Seleccionar CSV">
+                  Seleccionar CSV</span
+                ></button
+              ><button
+                id="clear-csv-button"
+                class="text-button"
+                type="button"
+                disabled
+              >
+                <span data-i18n="Quitar"> Quitar</span></button
+              ><button id="download-template-button" type="button">
+                <span data-i18n="Descargar plantilla">
+                  Descargar plantilla
+                </span>
+              </button>
+            </div>
+            <p id="csv-file-name" class="field-note">
+              <span data-i18n="Sin CSV seleccionado."
+                >Sin CSV seleccionado.</span
+              >
+            </p>
+            <p class="field-note">
+              <span data-i18n="Incluye la lada internacional:">
+                Incluye la lada internacional: </span
+              ><strong>52</strong
+              ><span data-i18n="para México. El programa agrega">
+                para México. El programa agrega </span
+              ><strong>+</strong><span data-i18n="si falta."> si falta. </span>
+            </p>
+            <p
+              id="template-status"
+              class="field-note"
+              role="status"
+              aria-live="polite"
+            ></p>
+            <p
+              id="contacts-status"
+              class="field-note"
+              role="status"
+              aria-live="polite"
+            >
+              <span data-i18n="Preparando importación…">
+                Preparando importación…
+              </span>
+            </p>
+          </div>
+          <div class="toolbar-field">
+            <h2><span data-i18n="2. Documentos">2. Documentos</span></h2>
+            <div class="actions">
+              <button id="select-root-button" type="button" disabled>
+                <span data-i18n="Seleccionar carpeta">
+                  Seleccionar carpeta</span
+                ></button
+              ><button
+                id="clear-preview-button"
+                class="text-button"
+                type="button"
+                disabled
+              >
+                <span data-i18n="Quitar"> Quitar </span>
+              </button>
+            </div>
+            <p id="root-name" class="field-note">
+              <span data-i18n="Sin carpeta seleccionada."
+                >Sin carpeta seleccionada.</span
+              >
+            </p>
+          </div>
+          <div class="toolbar-field message-field">
+            <label for="queue-message"
+              ><span data-i18n="3. Mensaje">3. Mensaje </span
+              ><span class="field-note"
+                ><span data-i18n="(opcional)">(opcional)</span></span
+              ></label
+            >
+            <textarea
+              id="queue-message"
+              rows="3"
+              maxlength="1000"
+              placeholder="Escribe el mensaje que acompañará a los archivos…"
+              aria-describedby="message-note message-count"
+              data-i18n-placeholder="Escribe el mensaje que acompañará a los archivos…"
+            ></textarea>
+            <p id="message-note" class="field-note">
+              <span
+                data-i18n="Se enviará con cada ZIP. El mismo texto para todos."
+              >
+                Se enviará con cada ZIP. El mismo texto para todos.
+              </span>
+            </p>
+            <p id="message-count" class="field-note">0 / 1000</p>
+          </div>
+          <div class="toolbar-field interval-field">
+            <label for="queue-interval"
+              ><span data-i18n="4. Pausa entre envíos"
+                >4. Pausa entre envíos</span
+              ></label
+            >
+            <div class="interval-input">
+              <input
+                id="queue-interval"
+                type="number"
+                min="10"
+                max="3600"
+                step="1"
+                value="10"
+              /><span><span data-i18n="segundos">segundos</span></span>
+            </div>
+            <p class="field-note">
+              <span data-i18n="Mínimo 10 segundos.">Mínimo 10 segundos.</span>
+            </p>
+          </div>
+        </section>
+        <details id="contacts-details" class="contacts-validation">
+          <summary id="contacts-summary">
+            <span data-i18n="Revisar contactos del CSV"
+              >Revisar contactos del CSV</span
+            >
+          </summary>
+          <ul id="csv-file-errors" class="contact-errors" hidden></ul>
+          <div id="contacts-preview" hidden>
+            <label for="contacts-filter"
+              ><span data-i18n="Mostrar contactos"
+                >Mostrar contactos</span
+              ></label
+            ><select id="contacts-filter">
+              <option value="all" data-i18n="Todos">Todos</option>
+              <option value="invalid" data-i18n="Con errores">
+                Con errores
+              </option>
+              <option value="valid" data-i18n="Válidos">Válidos</option>
+            </select>
+            <div
+              class="contact-table-wrap"
+              tabindex="0"
+              role="region"
+              aria-label="Validación del CSV"
+              data-i18n-aria-label="Validación del CSV"
+            >
+              <table>
+                <caption>
+                  <span data-i18n="Contactos importados">
+                    Contactos importados
+                  </span>
+                </caption>
+                <thead>
+                  <tr>
+                    <th><span data-i18n="Línea">Línea</span></th>
+                    <th><span data-i18n="Nombre">Nombre</span></th>
+                    <th><span data-i18n="Teléfono CSV">Teléfono CSV</span></th>
+                    <th><span data-i18n="Normalizado">Normalizado</span></th>
+                    <th><span data-i18n="Validación">Validación</span></th>
+                  </tr>
+                </thead>
+                <tbody id="contacts-rows"></tbody>
+              </table>
+            </div>
+            <div class="actions contacts-pagination">
+              <button id="contacts-prev" type="button">
+                <span data-i18n="Anterior">Anterior</span></button
+              ><span id="contacts-page"></span
+              ><button id="contacts-next" type="button">
+                <span data-i18n="Siguiente">Siguiente</span>
+              </button>
+            </div>
+          </div>
+        </details>
+        <section class="recipients-panel" aria-labelledby="files-title">
+          <div class="list-heading">
+            <div>
+              <h2 id="files-title">
+                <span data-i18n="Destinatarios">Destinatarios</span>
+              </h2>
+              <p id="preview-status" role="status" aria-live="polite">
+                <span data-i18n="Importa contactos para comenzar.">
+                  Importa contactos para comenzar.
+                </span>
+              </p>
+            </div>
+            <div>
+              <label class="sr-only" for="preview-filter"
+                ><span data-i18n="Mostrar destinatarios"
+                  >Mostrar destinatarios</span
+                ></label
+              ><select id="preview-filter">
+                <option value="all" data-i18n="Todos">Todos</option>
+                <option value="eligible" data-i18n="Disponibles">
+                  Disponibles
+                </option>
+                <option value="problems" data-i18n="Necesitan revisión">
+                  Necesitan revisión
+                </option>
+                <option value="selected" data-i18n="Seleccionados">
+                  Seleccionados
+                </option>
+              </select>
+            </div>
+          </div>
+          <div
+            class="recipient-scroll"
+            tabindex="0"
+            role="region"
+            aria-label="Destinatarios y archivos"
+            data-i18n-aria-label="Destinatarios y archivos"
+          >
+            <div class="recipient-columns" aria-hidden="true">
+              <span></span
+              ><span
+                ><span data-i18n="Destinatario / Teléfono"
+                  >Destinatario / Teléfono</span
+                ></span
+              ><span
+                ><span data-i18n="Archivos seleccionados"
+                  >Archivos seleccionados</span
+                ></span
+              ><span
+                ><span data-i18n="Estado / Espera">Estado / Espera</span></span
+              >
+            </div>
+            <div id="preview-rows"></div>
+          </div>
+          <div
+            id="preview-pagination"
+            class="actions contacts-pagination"
+            hidden
+          >
+            <button id="preview-prev" type="button">
+              <span data-i18n="Anterior">Anterior</span></button
+            ><span id="preview-page"></span
+            ><button id="preview-next" type="button">
+              <span data-i18n="Siguiente">Siguiente</span>
+            </button>
+          </div>
+          <details id="root-excluded" hidden>
+            <summary>
+              <span data-i18n="Elementos excluidos de la carpeta principal"
+                >Elementos excluidos de la carpeta principal</span
+              >
+            </summary>
+            <ul id="root-excluded-list" class="contact-errors"></ul>
+          </details>
+        </section>
+        <section
+          class="send-bar"
+          aria-label="Estado y acciones del envío"
+          data-i18n-aria-label="Estado y acciones del envío"
+        >
+          <div class="send-summary">
+            <p id="selection-summary"></p>
+            <div class="actions">
+              <button
+                id="prepare-queue-button"
+                class="primary"
+                type="button"
+                disabled
+              >
+                <span data-i18n="Revisar envío"> Revisar envío</span></button
+              ><span
+                id="completion-status"
+                role="status"
+                aria-live="polite"
+                hidden
+                ><span data-i18n="Envío completado"
+                  >Envío completado</span
+                ></span
+              ><button
+                id="stop-queue-button"
+                class="danger-button"
+                type="button"
+                disabled
+                hidden
+              >
+                <span data-i18n="Detener envío"> Detener envío </span>
+              </button>
+            </div>
+          </div>
+          <p id="queue-account" role="status"></p>
+          <p id="queue-status" role="status" aria-live="polite"></p>
+          <p id="queue-progress"></p>
+        </section>
+        <p id="connection-status" class="sr-only" role="status">
+          <span data-i18n="Comprobando la aplicación…">
+            Comprobando la aplicación…
+          </span>
+        </p>
+      </main>
+    </div>
+    <dialog id="send-review-dialog" aria-labelledby="review-title">
+      <div class="dialog-heading">
+        <h2 id="review-title">
+          <span data-i18n="Revisar envío">Revisar envío</span>
+        </h2>
+        <button
+          id="close-review-button"
+          type="button"
+          aria-label="Cerrar revisión"
+          data-i18n-aria-label="Cerrar revisión"
+        >
+          <span data-i18n="Cerrar"> Cerrar </span>
+        </button>
+      </div>
+      <p id="queue-review-summary"></p>
+      <p class="field-note">
+        <span
+          data-i18n="Comprueba los teléfonos y archivos. Se creará un ZIP sin contraseña por destinatario."
+        >
+          Comprueba los teléfonos y archivos. Se creará un ZIP sin contraseña
+          por destinatario.
+        </span>
+      </p>
+      <div id="review-message" class="review-message" hidden>
+        <h3>
+          <span data-i18n="Mensaje para todos los destinatarios"
+            >Mensaje para todos los destinatarios</span
+          >
+        </h3>
+        <p id="queue-review-message"></p>
+      </div>
+      <div id="queue-review-items"></div>
+      <div class="actions contacts-pagination">
+        <button id="queue-review-prev" type="button">
+          <span data-i18n="Anterior">Anterior</span></button
+        ><span id="queue-review-page"></span
+        ><button id="queue-review-next" type="button">
+          <span data-i18n="Siguiente">Siguiente</span>
+        </button>
+      </div>
+      <p id="review-feedback" role="status" aria-live="polite"></p>
+      <div class="dialog-actions">
+        <button id="cancel-review-button" type="button">
+          <span data-i18n="Volver a la selección">
+            Volver a la selección</span
+          ></button
+        ><button id="start-queue-button" class="primary" type="button" disabled>
+          <span data-i18n="Confirmar y enviar"> Confirmar y enviar </span>
+        </button>
+      </div>
+    </dialog>
+  </body>
+</html>
