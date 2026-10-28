@@ -1,0 +1,136 @@
+name: Preparar distribución (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      create_draft:
+        description: Crear también una release beta en borrador (requiere licencia definida)
+        type: boolean
+        required: true
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: distribution-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-2022
+            target: windows
+            extension: exe
+          - os: ubuntu-24.04
+            target: linux
+            extension: AppImage
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 40
+    env:
+      CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - name: Comprobar datos de distribución
+        id: metadata
+        run: node scripts/check-distribution.cjs
+      - name: Comprobar licencia si se solicitó un borrador
+        if: inputs.create_draft
+        run: node scripts/check-distribution.cjs --release
+      - run: npm ci
+      - run: npm run check
+      - name: Preparar entorno gráfico Linux
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y xvfb libgtk-3-0 libnss3 libasound2t64 apparmor
+      - name: Permitir namespaces de sandbox solo a los binarios de prueba
+        if: runner.os == 'Linux'
+        run: bash scripts/configure-linux-ci-sandbox.sh
+      - name: Verificar escritorio Linux
+        if: runner.os == 'Linux'
+        run: xvfb-run -a npm run test:desktop
+      - name: Verificar escritorio Windows
+        if: runner.os == 'Windows'
+        run: npm run test:desktop
+      - name: Generar paquete del sistema correspondiente
+        run: npm run build:${{ matrix.target }}
+      - name: Verificar runtime Linux del paquete
+        if: runner.os == 'Linux'
+        run: xvfb-run -a npm run test:package
+      - name: Verificar runtime Windows del paquete
+        if: runner.os == 'Windows'
+        run: npm run test:package
+      - name: Conservar instalador o AppImage para revisión
+        uses: actions/upload-artifact@v4
+        with:
+          name: WA-File-Sender-${{ steps.metadata.outputs.version }}-${{ matrix.target }}-x64
+          path: dist/WA-File-Sender-${{ steps.metadata.outputs.version }}-${{ matrix.target }}-x64.${{ matrix.extension }}
+          if-no-files-found: error
+          retention-days: 14
+
+  draft:
+    if: inputs.create_draft
+    needs: build
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Verificar licencia y versión antes de crear el borrador
+        id: metadata
+        run: node scripts/check-distribution.cjs --release
+      - uses: actions/download-artifact@v4
+        with:
+          pattern: WA-File-Sender-${{ steps.metadata.outputs.version }}-*-x64
+          path: release-artifacts
+          merge-multiple: true
+      - name: Calcular huellas de los dos paquetes
+        run: node scripts/release-checksums.cjs release-artifacts
+      - name: Comprobar que un tag existente corresponde al commit seleccionado
+        env:
+          VERSION_TAG: ${{ steps.metadata.outputs.tag }}
+          SOURCE_SHA: ${{ github.sha }}
+        run: |
+          node - <<'NODE'
+          const { spawnSync } = require('node:child_process');
+          const tag = spawnSync('git', ['rev-parse', '--verify', `refs/tags/${process.env.VERSION_TAG}^{commit}`], { encoding: 'utf8' });
+          if (tag.status === 0 && tag.stdout.trim() !== process.env.SOURCE_SHA) {
+            console.error('El tag existente apunta a otro commit. No se creará una release.');
+            process.exit(1);
+          }
+          NODE
+      - name: Crear borrador beta sin publicarlo
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          VERSION: ${{ steps.metadata.outputs.version }}
+          VERSION_TAG: ${{ steps.metadata.outputs.tag }}
+          SOURCE_SHA: ${{ github.sha }}
+        run: |
+          if gh release view "$VERSION_TAG" >/dev/null 2>&1; then
+            echo "Ya existe una release para esta versión. No se modificará."
+            exit 1
+          fi
+          gh release create "$VERSION_TAG" \
+            --target "$SOURCE_SHA" \
+            --title "WA File Sender $VERSION" \
+            --draft --prerelease --latest=false \
+            --notes-file docs/release-notes.md \
+            "release-artifacts/WA-File-Sender-${VERSION}-windows-x64.exe" \
+            "release-artifacts/WA-File-Sender-${VERSION}-linux-x64.AppImage" \
+            "release-artifacts/SHA256SUMS.txt"

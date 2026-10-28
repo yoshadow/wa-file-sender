@@ -1,0 +1,30 @@
+appId: io.github.yoshadow.wa-file-sender
+productName: WA File Sender
+copyright: Copyright © 2026 Isaac Avalos
+asar: true
+asarUnpack:
+  - '**/*.node'
+extraResources:
+  - from: .cache/bundled-browser
+    to: browser
+directories:
+  output: dist
+files:
+  - src/**
+  - assets/**
+  - package.json
+  - LICENSE
+  - NOTICE
+win:
+  icon: assets/icon.ico
+  artifactName: WA-File-Sender-${version}-windows-${arch}.${ext}
+  target:
+    - target: nsis
+      arch: [x64]
+linux:
+  icon: assets/icon.png
+  artifactName: WA-File-Sender-${version}-linux-${arch}.${ext}
+  target:
+    - target: AppImage
+      arch: [x64]
+  category: Utility

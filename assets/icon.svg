@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 128 128" role="img" aria-label="WA File Sender: carpeta y avión de papel">
+  <!-- Fondo de un solo color, esquinas redondeadas y exterior transparente. -->
+  <rect x="0" y="0" width="128" height="128" rx="25" fill="#176B83"/>
+  <!-- Un solo estilo de trazo para todos los elementos del símbolo. -->
+  <g fill="none" stroke="#FFFFFF" stroke-width="4.1" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Pestaña y contorno superior de la carpeta -->
+    <path d="M20 58 V52 C20 45.5 25.5 41 32 41 H45.8 C50.9 41 53.1 42.6 55.7 47 L61 56 C62.7 58.8 65.3 58.8 69.2 58.8 H72.5"/>
+    <!-- Contorno inferior abierto para el avión -->
+    <path d="M20 58.8 V89.1 C20 95 24.5 99 30.3 99 H76.3 C82 99 85.1 95 85.1 89.1 V71"/>
+    <!-- Línea del borde delantero de la carpeta -->
+    <path d="M20 58.8 H72.5"/>
+    <!-- Trayectoria del papel que sale de la carpeta -->
+    <path d="M32 85 C47 85.4 62.5 80.4 75.4 67.7"/>
+    <!-- Avión de papel: silueta y pliegues, también sin relleno -->
+    <path d="M66.5 46.1 L110 29.2 L95.1 69.1 L82.1 55.4 L79.5 62.4 L79.5 54.2 Z"/>
+    <path d="M79.5 54.2 L110 29.2"/>
+  </g>
+</svg>
