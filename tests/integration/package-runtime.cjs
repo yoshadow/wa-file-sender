@@ -9,6 +9,7 @@ const {
   writeFile,
   readFile,
   readdir,
+  realpath,
 } = require('node:fs/promises');
 const { readZip } = require('../helpers/read-zip.cjs');
 const { tmpdir } = require('node:os');
@@ -18,7 +19,9 @@ async function main() {
   const resources = process.argv[2];
   const appPath = path.join(resources, 'app.asar');
   const load = createRequire(path.join(appPath, 'package.json'));
-  const root = await mkdtemp(path.join(tmpdir(), 'wa-package-check-'));
+  const root = await realpath(
+    await mkdtemp(path.join(tmpdir(), 'wa-package-check-')),
+  );
   try {
     const metadata = load('./package.json');
     assert.equal(metadata.version, require('../../package.json').version);

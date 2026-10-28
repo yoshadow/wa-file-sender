@@ -37,3 +37,9 @@ Continuar los ajustes una etapa a la vez, con demostración, pruebas y revisión
 Las plataformas objetivo siguen siendo Windows 10/11 x64 y Ubuntu 24.04 x64. Antes de distribuir, validar equipos limpios, navegador incluido, SQLite, firma y publicación.
 
 La integración no oficial puede cambiar o provocar restricciones de cuenta; las pausas no garantizan evitarlas. Si deja de ser viable, evaluar preparación local con envío manual o un transporte basado en WhatsApp Business Platform.
+
+## Entorno de CI
+
+Ubuntu 24.04 restringe los namespaces de usuario de binarios descargados. El workflow prepara un perfil AppArmor con `userns` permitido únicamente para las rutas exactas de Electron y Chrome usadas en el runner efímero. No desactiva el sandbox ni cambia la política global del sistema. `scripts/configure-linux-ci-sandbox.sh` rechaza su ejecución fuera de GitHub Actions Linux. Referencia: [documentación de Chromium](https://chromium.googlesource.com/chromium/src/+/main/docs/security/apparmor-userns-restrictions.md).
+
+Las carpetas temporales de pruebas se resuelven con `realpath` antes de crear planes de archivos, igual que las carpetas seleccionadas en producción. Esto evita confundir alias 8.3 de Windows con rutas canónicas sin relajar las validaciones de enlaces o archivos fuera de la raíz.

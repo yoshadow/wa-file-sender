@@ -215,7 +215,9 @@ test('selection IPC accepts only one revision, opaque identifier and boolean, ne
 });
 
 async function withTree(run) {
-  const temporary = await fs.mkdtemp(path.join(tmpdir(), 'wa-preview-'));
+  const temporary = await fs.realpath(
+    await fs.mkdtemp(path.join(tmpdir(), 'wa-preview-')),
+  );
   try {
     const root = path.join(temporary, 'principal');
     await fs.mkdir(path.join(root, 'Ana Pérez', 'Interna'), {

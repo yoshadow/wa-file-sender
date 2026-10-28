@@ -25,7 +25,10 @@ const {
 const { readZip } = require('../helpers/read-zip.cjs');
 
 async function fixture(run) {
-  const directory = await fs.mkdtemp(path.join(tmpdir(), 'wa-compression-'));
+  // Windows may expose the temp directory through an 8.3 alias; plans use real paths.
+  const directory = await fs.realpath(
+    await fs.mkdtemp(path.join(tmpdir(), 'wa-compression-')),
+  );
   try {
     const root = path.join(directory, 'originales');
     const folderName = 'Ana Pérez';

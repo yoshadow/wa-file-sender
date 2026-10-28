@@ -26,7 +26,10 @@ jobs:
       - run: npm run check
       - name: Preparar entorno gráfico Linux
         if: runner.os == 'Linux'
-        run: sudo apt-get update && sudo apt-get install -y xvfb libgtk-3-0 libnss3 libasound2t64
+        run: sudo apt-get update && sudo apt-get install -y xvfb libgtk-3-0 libnss3 libasound2t64 apparmor
+      - name: Permitir namespaces de sandbox solo a los binarios de prueba
+        if: runner.os == 'Linux'
+        run: bash scripts/configure-linux-ci-sandbox.sh
       - name: Verificar ventana Linux
         if: runner.os == 'Linux'
         run: xvfb-run -a npm run test:desktop

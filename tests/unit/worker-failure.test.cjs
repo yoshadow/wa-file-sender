@@ -7,6 +7,7 @@ const {
   mkdtemp,
   rm,
   readdir,
+  realpath,
   mkdir,
   writeFile,
 } = require('node:fs/promises');
@@ -18,7 +19,9 @@ const vm = require('node:vm');
 
 for (const mode of ['failure', 'renamed-id'])
   test(`worker ${mode}: preserves exact outcomes through RPC without retrying, with cleanup owned by the compression session`, async () => {
-    const root = await mkdtemp(path.join(tmpdir(), 'wa-worker-test-'));
+    const root = await realpath(
+      await mkdtemp(path.join(tmpdir(), 'wa-worker-test-')),
+    );
     const file = path.resolve(
       __dirname,
       '../../src/adapters/whatsapp/worker.cjs',
