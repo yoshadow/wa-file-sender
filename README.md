@@ -2,11 +2,52 @@
 
 [English](README.en.md)
 
-Autor: **Isaac Avalos** · Candidata: **0.1.0-beta.1** · Licencia: [GPL v3](LICENSE) (`GPL-3.0-only`).
+Autor: **Isaac Avalos** · Beta: **0.1.0-beta.1** · Licencia: [GPL v3](LICENSE) (`GPL-3.0-only`).
 
-Aplicación de escritorio para preparar y enviar **un ZIP por contacto de WhatsApp**, con revisión previa y una pausa mínima de 10 segundos. Plataformas objetivo: Windows 10/11 x64 y Ubuntu 24.04 x64.
+Aplicación de escritorio para preparar y enviar **un ZIP por contacto de WhatsApp**, con revisión previa y una pausa mínima de 10 segundos.
 
 La interfaz y el QR se muestran en la ventana de Electron. WhatsApp utiliza un navegador administrado en segundo plano. La integración es no oficial y las pausas no garantizan evitar bloqueos.
+
+## Descarga e instalación
+
+La [beta 0.1.0-beta.1](https://github.com/yoshadow/wa-file-sender/releases/tag/v0.1.0-beta.1) está disponible para sistemas **x64**. No necesitas instalar Node.js, npm ni Chrome para usar los paquetes.
+
+| Sistema         | Descarga                                                                                                                                          |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Windows x64     | [Instalador .exe](https://github.com/yoshadow/wa-file-sender/releases/download/v0.1.0-beta.1/WA-File-Sender-0.1.0-beta.1-windows-x64.exe)         |
+| Linux x64       | [Aplicación .AppImage](https://github.com/yoshadow/wa-file-sender/releases/download/v0.1.0-beta.1/WA-File-Sender-0.1.0-beta.1-linux-x64.AppImage) |
+| Huellas SHA-256 | [SHA256SUMS.txt](https://github.com/yoshadow/wa-file-sender/releases/download/v0.1.0-beta.1/SHA256SUMS.txt)                                       |
+
+Los archivos **Source code** de la release contienen el código fuente; para instalar la aplicación utiliza el `.exe` o el `.AppImage`.
+
+### Windows
+
+1. Descarga el instalador `.exe` del enlace anterior.
+2. Abre el archivo y sigue las instrucciones del instalador.
+3. Inicia **WA File Sender** desde el menú Inicio.
+
+### Linux
+
+1. Descarga el archivo `.AppImage` y guárdalo en una carpeta donde quieras conservar la aplicación.
+2. Abre una terminal en esa carpeta y permite su ejecución:
+
+   ```sh
+   chmod +x WA-File-Sender-0.1.0-beta.1-linux-x64.AppImage
+   ```
+
+3. Ábrelo con doble clic o desde esa terminal:
+
+   ```sh
+   ./WA-File-Sender-0.1.0-beta.1-linux-x64.AppImage
+   ```
+
+El AppImage se ejecuta directamente; no utiliza un asistente de instalación.
+
+### Compatibilidad comprobada
+
+Se confirmó manualmente el funcionamiento, el envío, la apertura del ZIP recibido y la recuperación de sesión en **Windows 11 x64** y **Linux Mint 22.3 Cinnamon de 64 bits**. Windows 10 y Ubuntu 24.04 siguen pendientes de prueba manual de los paquetes; otras distribuciones y arquitecturas no se han verificado.
+
+Los paquetes de esta beta no están firmados y el sistema puede mostrar una advertencia de seguridad. Las huellas SHA-256 permiten comprobar la integridad de los archivos, pero no sustituyen una firma del autor.
 
 ## Uso
 
@@ -33,7 +74,7 @@ npm ci
 npm start
 ```
 
-La instalación prepara Electron y el navegador local. Durante los ajustes actuales se ejecuta desde el código: **no se generan empaquetados**. Cierra la aplicación anterior antes de iniciar otra instancia.
+La instalación de dependencias prepara Electron y el navegador local para ejecutar desde el código fuente. Cierra la aplicación anterior antes de iniciar otra instancia.
 
 ```sh
 npm run check
@@ -42,7 +83,7 @@ npm run test:desktop
 
 Las pruebas automáticas usan perfiles temporales y clientes ficticios; no conectan una cuenta ni envían mensajes reales. Verifican CSV, selección, ZIP, logs, pausas, estados, seguridad y cierre. La prueba de escritorio también abre el navegador incluido en una página en blanco. En Linux sin pantalla se puede usar `xvfb-run -a npm run test:desktop`, conservando el sandbox.
 
-CI ejecuta controles y pruebas de escritorio en Ubuntu 24.04 y Windows Server 2022. La compatibilidad con Windows 10/11 requiere comprobaciones manuales adicionales. Se conservan las herramientas de distribución para una etapa posterior, sin ejecutarlas en CI durante estos ajustes.
+CI ejecuta controles y pruebas de escritorio en Ubuntu 24.04 y Windows Server 2022. La generación de paquetes se ejecuta por separado mediante el workflow manual de distribución; no se inicia con cada push o pull request. Las pruebas de CI no sustituyen las pruebas manuales de los paquetes.
 
 ## Datos y control de versiones
 
@@ -50,7 +91,7 @@ Se guarda **un log por lote** con todos sus contactos en la carpeta principal se
 
 Nunca incluir documentos reales, CSV de contactos, sesiones, QR, ZIP temporales, bases ni logs en Git. Revisa los archivos antes de cada commit. Mantén `main` estable y revisa los cambios de cada etapa antes de integrarlos o distribuirlos.
 
-La [guía de distribución](docs/distribution.md) explica el flujo manual de Windows/Linux y la futura release en borrador. Añadir el workflow no lo ejecuta ni publica paquetes.
+La [guía de distribución](docs/distribution.md) explica el flujo manual de Windows/Linux y la preparación de releases en borrador. El workflow no publica releases automáticamente. Consulta las [notas de la beta publicada](https://github.com/yoshadow/wa-file-sender/releases/tag/v0.1.0-beta.1) para los resultados de esta versión.
 
 Consulta la [arquitectura y decisiones](docs/development-plan.md) y la [documentación técnica de logs](docs/logs.md).
 
