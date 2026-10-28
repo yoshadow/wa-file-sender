@@ -1,4 +1,4 @@
-# WA File Sender — beta candidate / candidata beta
+# WA File Sender 0.1.0-beta.1
 
 Author / Autor: Isaac Avalos.
 
@@ -6,7 +6,14 @@ Author / Autor: Isaac Avalos.
 
 First distribution candidate with Spanish and English, CSV contact validation, one unencrypted ZIP per recipient, an optional common message, sequential WhatsApp sends with a minimum 10-second pause, stop controls and one log per batch.
 
-**Draft for review. Do not publish before completing package checks.** Windows 10/11 x64 and Ubuntu 24.04 x64 are target platforms; installer/AppImage compatibility is not yet confirmed. Windows Server CI checks do not establish Windows 10/11 compatibility. Update this section with the exact systems manually tested before publication. Packages are initially unsigned.
+**Draft for review; not published.** Manual testing reported by Isaac Avalos on October 28, 2026 confirmed application operation, sending, opening the received ZIP and session recovery on:
+
+- Windows 11 x64 (OS build not recorded).
+- Linux Mint 22.3 Cinnamon 64-bit.
+
+Windows 10 and Ubuntu 24.04 package compatibility remain pending manual testing. Other distributions and architectures have not been verified. These results cover the checks listed above, not every application scenario. Packages are unsigned.
+
+Both attached packages are the original artifacts from [distribution run 40624285147](https://github.com/yoshadow/wa-file-sender/actions/runs/40624285147), built from commit `f3657589d9d0cf5067d3cfc16665f8efa768ac79`. Automated checks passed on Windows and Linux. The version tag targets that source commit; the packages have not been rebuilt after manual testing.
 
 The WhatsApp Web integration is unofficial. Pauses do not guarantee protection against account restrictions. Check uncertain results in the chat before repeating a send. CSV headers remain `nombre,telefono` in both languages; phone numbers require an international country code, with an optional `+`.
 
@@ -16,7 +23,14 @@ Download the Windows `.exe` installer or Linux `.AppImage` for your system. The 
 
 Primera candidata de distribución con español e inglés, validación de contactos CSV, un ZIP sin cifrado por destinatario, mensaje común opcional, envíos secuenciales por WhatsApp con pausa mínima de 10 segundos, detención y un log por lote.
 
-**Borrador para revisión. No publicar antes de completar las comprobaciones de paquetes.** Windows 10/11 x64 y Ubuntu 24.04 x64 son plataformas objetivo; la compatibilidad del instalador/AppImage aún no está confirmada. Las pruebas en Windows Server de CI no acreditan compatibilidad con Windows 10/11. Actualizar esta sección con los sistemas exactos probados manualmente antes de publicar. Los paquetes iniciales no están firmados.
+**Borrador para revisión; sin publicar.** Pruebas manuales reportadas por Isaac Avalos el 28 de octubre de 2026 confirmaron el funcionamiento de la aplicación, el envío, la apertura del ZIP recibido y la recuperación de sesión en:
+
+- Windows 11 x64 (compilación del sistema no registrada).
+- Linux Mint 22.3 Cinnamon de 64 bits.
+
+La compatibilidad de los paquetes con Windows 10 y Ubuntu 24.04 sigue pendiente de prueba manual. Otras distribuciones y arquitecturas no se han verificado. Estos resultados cubren las comprobaciones mencionadas, no todos los escenarios de la aplicación. Los paquetes no están firmados.
+
+Ambos paquetes adjuntos son los artefactos originales de la [ejecución de distribución 40624285147](https://github.com/yoshadow/wa-file-sender/actions/runs/40624285147), generados desde el commit `f3657589d9d0cf5067d3cfc16665f8efa768ac79`. Las comprobaciones automáticas pasaron en Windows y Linux. La etiqueta de versión apunta a ese código fuente; los paquetes no se volvieron a generar después de las pruebas manuales.
 
 La integración con WhatsApp Web es no oficial. Las pausas no garantizan evitar restricciones de cuenta. Los resultados inciertos deben comprobarse en el chat antes de reenviar. Los encabezados CSV siguen siendo `nombre,telefono` en ambos idiomas; los teléfonos requieren lada internacional y el `+` es opcional.
 
